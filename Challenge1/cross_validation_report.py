@@ -4,9 +4,10 @@
 import math
 import pickle
 from architectures import FCNN,CNN
+# Suppress InconsistentVersionWarning
+# (used locally (MacOS) just to suppress warnings deriving from cuda, nothing to worry about)
 import warnings
 from sklearn.exceptions import InconsistentVersionWarning
-# Suppress InconsistentVersionWarning
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
 
 #--------------------------------------------------------------------------------
@@ -75,6 +76,5 @@ print(f"Best configuration  -> {grid_search_CNN.best_params_}")
 print(f"Balanced Accuracy   -> {mean_test_score_CNN:.4f} +- {1.96*std_test_score_CNN/math.sqrt(N):.4f}")
 print(f"Training time (s)   -> {mean_fit_time_CNN:.4f} +- {1.96*std_fit_time_CNN/math.sqrt(N):.4f}")
 print(f"Prediction time (s) -> {mean_score_time_CNN:.4f} +- {1.96*std_score_time_CNN/math.sqrt(N):.4f}")
-
 print('-'*80)
 #--------------------------------------------------------------------------------
