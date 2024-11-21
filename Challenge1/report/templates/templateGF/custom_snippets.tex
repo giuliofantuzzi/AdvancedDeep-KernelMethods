@@ -1,0 +1,90 @@
+\usepackage[many]{tcolorbox}
+\tcbset{
+    colframe=magenta,
+    colback=magenta!12!white,
+    boxed title style={colback=magenta},
+    breakable,
+    enhanced,
+    sharp corners,
+    boxsep=1pt,
+    attach boxed title to top left={yshift=-\tcboxedtitleheight,  yshifttext=-.75\baselineskip},
+    boxed title style={boxsep=1pt,sharp corners},
+    fonttitle=\bfseries\sffamily,
+    drop lifted shadow
+}
+
+\newtcolorbox[auto counter,number format=\arabic]{definition}[1][]{
+    title={Definition~\thetcbcounter},
+    colframe=defcolor,
+    colback=defcolor!0!white,
+    boxed title style={colback=defcolor!80!white},
+    overlay unbroken and first={
+        \node[below right, font=\small, color=defcolor, text width=.8\linewidth] at (title.north east) {#1};
+    }
+}
+
+\newtcolorbox[auto counter,number format=\arabic]{theorem}[1][]{
+    title={Theorem~\thetcbcounter},
+    colframe=thmcolor,
+    colback=thmcolor!0!white,
+    fontupper=\itshape,
+    boxed title style={colback=thmcolor!80!white},
+    overlay unbroken and first={
+        \node[below right, font=\small, color=thmcolor, text width=.8\linewidth] at (title.north east) {#1};
+    }
+}
+
+\newtcolorbox[auto counter,number format=\arabic]{example}[1][]{
+    title={Example~\thetcbcounter},
+    colframe=excolor,
+    colback=excolor!0!white,
+    boxed title style={colback=excolor!80!white},
+    overlay unbroken and first={
+        \node[below right, font=\small, color=excolor!80!white, text width=.8\linewidth] at (title.north east) {#1};
+    }
+}
+
+\newtcolorbox[auto counter,number format=\arabic]{exercise}[1][]{
+    title={Exercise~\thetcbcounter},
+    colframe=exercisecolor,
+    colback=exercisecolor!0!white,
+    boxed title style={colback=exercisecolor!80!white},
+    overlay unbroken and first={
+        \node[below right, font=\small, color=exercisecolor, text width=.8\linewidth] at (title.north east) {#1};
+    }
+}
+
+\newtcolorbox[auto counter,number format=\arabic]{note}[1][]{
+    title={Note~\thetcbcounter},
+    colframe=notecolor,
+    colback=notecolor!0!white,
+    boxed title style={colback=notecolor!80!white},
+    overlay unbroken and first={
+        \node[below right, font=\small, color=notecolor, text width=.8\linewidth] at (title.north east) {#1};
+    }
+}
+
+\usepackage{listings}
+\lstnewenvironment{python}[1][]{
+    \lstset{
+        language=Python,
+        basicstyle=\small\ttfamily,
+        numbers=left,
+        numberstyle=\tiny\color{gray},
+        keywordstyle=\color{codekeyword},
+        stringstyle=\color{codestring},
+        commentstyle=\color{codecomment},
+        morekeywords={True, False, append, extend, insert, remove, pop, clear, index, count, sort, reverse},
+        breaklines=true,
+        frame=single,
+        framesep=3pt,
+        frameround=tttt,
+        backgroundcolor=\color{gray!10},
+        rulecolor=\color{black!30},
+        tabsize=4,
+        columns=flexible,
+        captionpos=b,
+        title=#1,
+        literate={\ }{{\space}}1
+    }
+}{}

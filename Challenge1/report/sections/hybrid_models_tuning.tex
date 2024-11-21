@@ -1,0 +1,101 @@
+\section{(Supervised) classification}\label{hybrid_model_tuning}
+I implemented and compared three different supervised classification models: \emph{Support Vector Classification (SVC)},
+\emph{Fully Connected Neural Networks (FCNN)} and \emph{Convolutional Neural Network (CNN)}. These models were trained using as target labels the 
+cluster-assigned labels from the unsupervised learning phase, rather than the original labels. The input to the models, 
+instead, consisted of the original images, not the 10-dimensional projections actually used for the clustering phase. The objective was to tune different 
+configurations for each model and compare their performance in terms of \emph{balanced accuracy} and computational cost. Instead of a static
+train-test split for the tuning, I considered to perform \emph{5-fold cross validation} to ensure robustness and generalization of the results.
+
+\subsection{Support Vector Classification (SVC)}\label{hybrid_model:svc}
+Parameter search was performed using the \texttt{GridSearchCV} function from \texttt{scikit-learn}. The grid of hyperparameters was designed 
+to evaluate two kernels, Polynomial and Gaussian, with the following configurations:
+\begin{itemize}
+    \item \textbf{Polynomial kernel}
+    \begin{itemize}
+        \item Regularization parameter \texttt{C} $\in \{0.1, 1, 10, 50\}$
+        \item Polynomial degree \texttt{deg} $\in \{2, 3, 4\}$
+    \end{itemize}
+    \item \textbf{Gaussian kernel}
+    \begin{itemize}
+        \item Regularization parameter \texttt{C} $\in \{0.1, 1, 10, 50\}$
+        \item Scale parameter \texttt{gamma} $\in \{0.005,0.01,0.05,0.1,0.5,1,5\}$
+    \end{itemize}
+\end{itemize}
+
+The values for \texttt{gamma} were selected basing on the same range used during dimensionality reduction with the gaussian kernel PCA. 
+This alignment seemed reasonable to maintain the structural relationships of the data between the two steps, making it more likely that 
+the \emph{SVC} would effectively classify the data based on the transformed feature space. The grid for the regularization parameter \texttt{C} 
+was designed to explore a wide range of scales, from smaller values encouraging a simpler decision boundary, to larger values accommodating 
+more complex boundaries. The best configuration found during the tuning phase was a gaussian kernel with \texttt{gamma}=0.05 and 
+\texttt{C}=10, which yielded the best performance.
+\newpage
+
+\subsection{Fully Connected Neural Network (FCNN)}\label{hybrid_model:fcnn}
+For the \emph{FCNN}, rather than building two networks with different configurations (as suggested), I wanted to perform a deeper analysis 
+through a more extensive hyperparameter tuning process. Although the model was implemented in \texttt{PyTorch}, I managed to use \texttt{GridSearchCV}
+by leveraging the \texttt{skorch} library, which provides a wrapper around \texttt{PyTorch} and offers a \texttt{sklearn}-compatible 
+interface. I designed the network with a single hidden layer and explored various configurations, tuning both some parts of the architecture 
+(hidden layer size, type of non-linearity and dropout rate) and some training hyperparameters including batch size and learning rate. 
+The hyperparameter grid I used for tuning was the following:
+\begin{itemize}
+    \item \textbf{Hidden dimension}: $\{128, 256, 512\}$
+    \item \textbf{Non linearity}: \{\texttt{ReLU()}, \texttt{Sigmoid()}, \texttt{Tanh()}\}
+    \item \textbf{Dropout}: $\{0.0, 0.5\}$
+    \item \textbf{Learning Rate}: $\{0.001,0.01\}$
+    \item \textbf{Batch Size}: $\{64, 128, 256\}$
+\end{itemize}
+
+Among all the networks tested in the cross-validation, the best performance was achieved by the network with 128 hidden units, Sigmoid 
+activation function and dropout rate of 0.5, trained with a learning rate of 0.01 and a batch size of 64.
+
+\subsection{Convolutional Neural Network (CNN)}\label{hybrid_model:cnn}
+
+For the \emph{CNN} architecture, I designed a network consisting of two convolutional layers followed by a two connected layers. Given the 
+reduced image size of 28x28 pixels, I chose a standard solution that preserves the spatial dimensions of the image as much as possible during 
+the convolutional steps. To achieve this, I relied on a kernel size of 3, a stride of 1 and padding of 1 for the convolutional layers. 
+After each convolutional layer, a pooling layer is applied in order to reduce the spatial dimensions. Specifically, I used pooling layers 
+with a kernel size of 2 and a stride of 2, which halves the width and height of the feature maps. For the convolutional layers, I started 
+with 16 output channels in the first layer and doubled the number of channels to 32 in the second layer. Then the fully connected layers take 
+the flattened output from the last convolutional layer and map it to the number of output classes through 128 hidden neurons. For hyperparameter 
+tuning, I conducted a grid search focusing on the activation function, the type of pooling and the presence or not of batch normalization, 
+as well as training hyperparameters such as learning rate and batch size. In summary, the grid I used for hyperparameter tuning was:
+
+\begin{itemize} 
+    \item \textbf{Non-linearity}: $\{\texttt{ReLU()}, \texttt{Sigmoid()}, \texttt{Tanh()}\}$ 
+    \item \textbf{Pooling}: $\{\texttt{MaxPool2d()}, \texttt{AvgPool2d()}\}$ 
+    \item \textbf{Batch Normalization}: $\{\texttt{True}, \texttt{False}\}$ 
+    \item \textbf{Learning Rate}: $\{0.001, 0.01\}$ 
+    \item \textbf{Batch Size}: $\{64, 128, 256\}$ 
+\end{itemize}
+
+After performing cross-validation, the configuration achieving the best performance resulted to be the network with 
+\texttt{ReLU()} activation function, \texttt{AvgPool2d()} pooling and batch normalization, trained with and a learning rate 
+of 0.01 and a batch size of 64.
+\newpage
+The performance of the three models is outlined in \Cref{tab:model_comparison}.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Model} & \textbf{Balanced Accuracy} & \textbf{Training Time (s)} & \textbf{Inference Time (s)}  \\
+    \hline
+    SVC & 0.9415 $\pm$ 0.0034 & 3.8215 $\pm$ 0.0210 & 1.2606 $\pm$ 0.0067 \\
+    FCNN & 0.8970 $\pm$ 0.0068 & 2.2041 $\pm$ 0.0246 & 0.0094 $\pm$ 0.0002 \\
+    CNN & 0.9033 $\pm$ 0.0072 & 4.2941 $\pm$ 0.0254 & 0.0358 $\pm$ 0.0018 \\
+    \hline
+    \end{tabular}
+    \caption{\footnotesize Comparison of SVC, FCNN, and CNN in terms of balanced accuracy, training time, and inference time. 
+    All the values are expressed as confidence intervals at 95\% level.}
+    \label{tab:model_comparison}
+\end{table}
+
+Among the three models compared, \emph{SVC} achieved the highest balanced accuracy (94.15\%), outperforming both the \emph{FCNN} (89.70\%) and the \emph{CNN} (90.33\%). 
+In my opinion, this superior performance can likely be attributed to the dimensionality reduction phase, which employed kernel PCA on the original data, retaining the 
+first 10 principal components for subsequent clustering. It seems reasonable to me that data obtained through kernel methods are better described by machine learning 
+techniques employing a similar kernel structure. This alignment ensures that \emph{SVC} can effectively capture the underlying patterns in the transformed feature space, 
+leading to an enhanced classification performance. However, despite its success in this experiment, \emph{SVC}'s reliance on kernel methods presents challenges in terms of
+scalability, where the computational cost of both training and inference might become prohibitive as dataset size grows. This limitation underscores the advantages of
+neural networks, particularly in scenarios involving large and complex datasets. Between the neural models, the \emph{CNN} marginally outperformed the \emph{FCNN}, 
+which is consistent with its architecture: \emph{CNNs} are specifically designed to capture spatial correlations and encode locality through convolutional and pooling operations. 
+Notably, the performance gain was minimal in our experiment, likely due to the simplicity of our dataset, consisting on small 28x28 pixel greyscale images with 
+limited complexity in their content.

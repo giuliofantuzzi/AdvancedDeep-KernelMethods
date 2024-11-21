@@ -1,0 +1,13 @@
+\section{About
+}\label{intro}
+This report presents my results for the first challenge of the \emph{Advanced Deep and Kernel Methods} course. The challenge
+involved developing a pipeline for the \emph{Fashion-MNIST} dataset, exploring methods that bridge
+unsupervised and supervised learning techniques.\\[0.2cm]
+All code and experiments are available at my \href{https://github.com/giuliofantuzzi/AdvancedDeep-KernelMethods/}{GitHub repository}. The whole analysis has been conducted within the \texttt{ORFEO} cluster environment,
+utilizing specific node partitions in order to optimize different stages of the pipeline. In particular:
+\begin{itemize}
+    \item \texttt{EPYC}\footnote{\footnotesize EPYC configuration: 2 x AMD EPYC 7H12 (2.6 GHz base, 3.3 GHz boost), with 128 cores (2 x 64) and 512 GiB RAM}
+nodes to perform the dimensionality reduction and clustering stages, as the high number of cores accelerates scikit-learn’s multithreaded methods;
+    \item \texttt{GPU} \footnote{\footnotesize GPU configuration:2 x Intel Xeon Gold 6226 (2.7 GHz base, 3.7 GHz boost), with 24 cores (2 x 12), 256 GiB RAM and NVIDIA V100 PCIe GPUs with 32 GiB}
+nodes for training all DL models and performing hyperparameter tuning.
+\end{itemize}

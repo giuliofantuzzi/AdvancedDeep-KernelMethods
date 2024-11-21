@@ -1,0 +1,59 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{dsfont} %to use the unitary symbol \mathds{1}
+\DeclareMathAlphabet{\mathams}{U}{msb}{m}{n}
+\newcommand{\E}{\mathams{E}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dern}[3]{\frac{d^{#3} #1}{d #2^{#3}}}
+\newcommand*\Laplace{\mathop{}\!\mathbin\bigtriangleup}
+\newcommand{\Usvd}{
+    \begin{bmatrix}
+       | & | & & | \\
+       u_1 & u_2 & \cdots & u_n \\
+       | & | & & |
+    \end{bmatrix}
+}
+\newcommand{\Uhatsvd}{
+    \begin{bmatrix}
+       | & | & & | \\
+       u_1 & u_2 & \cdots & u_m \\
+       | & | & & |
+    \end{bmatrix}
+}
+\newcommand{\Vsvd}{
+    \begin{bmatrix}
+       | & | & & | \\
+       v_1 & v_2 & \cdots & v_m \\
+       | & | & & |
+    \end{bmatrix}
+}
+\newcommand{\VTsvd}{
+    \begin{bmatrix}
+        - & v_1^T &- \\
+        - & v_2^T &- \\
+        & \vdots & \\
+        - & v_m^T &- 
+    \end{bmatrix}
+}
+\newcommand{\Ssvd}{\begin{bmatrix}
+       s_1 & 0 & \cdots & 0 \\
+       0 & s_2 & \cdots & 0 \\
+       \vdots & \vdots & \ddots & \vdots \\
+       0 & 0 & \cdots & s_m\\
+       0 & 0 & \cdots & 0\\
+       \vdots & \vdots & \ddots & \vdots \\
+       0 & 0 & \cdots & 0
+    \end{bmatrix}
+}
+\newcommand{\Shatsvd}{\begin{bmatrix}
+       s_1 & 0 & \cdots & 0 \\
+       0 & s_2 & \cdots & 0 \\
+       \vdots & \vdots & \ddots & \vdots \\
+       0 & 0 & \cdots & s_m
+    \end{bmatrix}
+}
+\newcommand{\pseudoinv}[1]{#1^{\dagger}}
